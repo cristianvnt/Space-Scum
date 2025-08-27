@@ -2,15 +2,18 @@
 
 #include <vector>
 #include <iostream>
+#include <random>
 
+/*
+*	Game defines
+*/
 constexpr int SCREEN_WIDTH = 1000;
 constexpr int SCREEN_HEIGHT = 700;
-
-// bullet stuff
-constexpr Vector2 bBody = { 10.f, 10.f };
-
 constexpr int FPS = 60;
 
+/*
+*	Function defines
+*/
 static void InitGame();
 static void UpdateGame(float dt);
 static void DrawStuff();
@@ -21,6 +24,12 @@ static void CheckBounds();
 static void SpawnBullet();
 static void UpdateBullets(float dt);
 
+static void SpawnEnemies();
+static void UpdateEnemies(float dt);
+static Vector2 RandomPosition();
+static void CheckCollisions();
+static void CleanUp();
+
 struct Player
 {
 	Rectangle body{};
@@ -30,9 +39,17 @@ struct Player
 struct Bullet
 {
 	Rectangle body{};
-	float speed;
-	bool active;
-	Color color;
+	float speed{};
+	bool active{};
+	Color color{};
+};
+
+struct Enemy
+{
+	Rectangle body{};
+	float speed{};
+	bool active{};
+	Color color{};
 };
 
 int main()
@@ -43,6 +60,8 @@ int main()
 
 	SetTargetFPS(FPS);
 	SetExitKey(KEY_Q);
+
+	SpawnEnemies();
 
 	while (!WindowShouldClose())
 	{
@@ -55,18 +74,23 @@ int main()
 
 Player player;
 std::vector<Bullet> bullets;
+std::vector<Enemy> enemies;
 
 void InitGame()
 {
 	player.body = { (float)SCREEN_WIDTH / 2.f, (float)SCREEN_HEIGHT / 1.5f, 50.f, 70.f };
-	player.speed = 200;
+	player.speed = 500;
 }
 
 void UpdateGame(float dt)
 {
 	CheckBounds();
 	ProcessInput(dt);
+
 	UpdateBullets(dt);
+	UpdateEnemies(dt);
+	CheckCollisions();
+	CleanUp();
 }
 
 void DrawStuff()
@@ -78,6 +102,9 @@ void DrawStuff()
 	
 	for (size_t i = 0; i < bullets.size(); ++i)
 		DrawRectangleRec(bullets[i].body, bullets[i].color);
+
+	for (size_t i = 0; i < enemies.size(); ++i)
+		DrawRectangleRec(enemies[i].body, enemies[i].color);
 
 	DrawFPS(10, 10);
 
@@ -119,7 +146,7 @@ void UpdateAndDraw(float dt)
 
 void SpawnBullet()
 {
-	bullets.push_back(Bullet{ {player.body.x, player.body.y, bBody.x, bBody.y}, 100.f, true, RED });
+	bullets.push_back(Bullet{ {player.body.x, player.body.y, 10.f, 10.f}, 1000.f, true, RED });
 }
 
 void UpdateBullets(float dt)
@@ -130,7 +157,77 @@ void UpdateBullets(float dt)
 			continue;
 
 		bullets[i].body.y -= bullets[i].speed * dt;
-		bullets.erase(std::remove_if(bullets.begin(), bullets.end(), [](const Bullet& b) {
-			return b.body.y < -b.body.height; }), bullets.end());
 	}
+}
+
+void SpawnEnemies()
+{
+
+	for (size_t i = 0; i < 5; ++i)
+	{
+		bool validEnemyPos = false;
+		float x{};
+		float y{};
+
+		while (!validEnemyPos)
+		{
+			x = RandomPosition().x;
+			y = RandomPosition().y;
+			Rectangle tempEnemy{ x, y, 50.f, 30.f };
+			validEnemyPos = true;
+
+			for (const auto& e : enemies)
+				if (CheckCollisionRecs(e.body, tempEnemy))
+				{
+					validEnemyPos = false;
+					break;
+				}
+		}
+
+		enemies.push_back(Enemy{ {x, y, 50.f, 30.f}, 200.f, true, MAGENTA });
+	}
+}
+
+void UpdateEnemies(float dt)
+{
+	for (size_t i = 0; i < enemies.size(); ++i)
+	{
+		if (!enemies[i].active)
+			continue;
+	}
+}
+
+Vector2 RandomPosition()
+{
+	std::random_device dev;
+	static std::mt19937 rng(dev());
+
+	std::uniform_real_distribution<float> distX(50.f, (float)GetScreenWidth() - 50.f);
+	std::uniform_real_distribution<float> distY(50.f, (float)GetScreenHeight() / 2.f - 30.f);
+
+	return { distX(rng), distY(rng) };
+}
+
+void CheckCollisions()
+{
+	for (size_t i = 0; i < enemies.size(); ++i)
+		for (size_t j = 0; j < bullets.size(); ++j)
+		{
+			if (enemies[i].active && bullets[j].active && CheckCollisionRecs(enemies[i].body, bullets[j].body))
+			{
+				enemies[i].active = false;
+				bullets[j].active = false;
+			}
+		}
+}
+
+void CleanUp()
+{
+	bullets.erase(std::remove_if(bullets.begin(), bullets.end(), [](const Bullet& b) {
+		return !b.active;
+		}), bullets.end());
+
+	enemies.erase(std::remove_if(enemies.begin(), enemies.end(), [](const Enemy& e) {
+		return !e.active;
+		}), enemies.end());
 }
