@@ -7,9 +7,9 @@
 /*
 *	Game defines
 */
-constexpr int SCREEN_WIDTH = 1000;
-constexpr int SCREEN_HEIGHT = 700;
-constexpr int FPS = 60;
+constexpr const int SCREEN_WIDTH = 1000;
+constexpr const int SCREEN_HEIGHT = 700;
+constexpr const int FPS = 60;
 
 /*
 *	Function defines
@@ -18,7 +18,6 @@ static void InitGame();
 static void UpdateGame(float dt);
 static void DrawStuff();
 static void ProcessInput(float dt);
-static void UpdateAndDraw(float dt);
 static void CheckBounds();
 
 static void SpawnBullet();
@@ -29,6 +28,38 @@ static void UpdateEnemies(float dt);
 static Vector2 RandomPosition();
 static void CheckCollisions();
 static void CleanUp();
+
+#pragma region TIMER
+struct Timer
+{
+	float _lifeTime;
+};
+
+void StartTimer(Timer* timer, float lifeTime)
+{
+	if (!timer)
+		return;
+	
+	timer->_lifeTime = lifeTime;
+}
+
+void UpdateTimer(Timer* timer)
+{
+	if (!timer || timer->_lifeTime < 0)
+		return;
+
+	timer->_lifeTime -= GetFrameTime();
+}
+
+bool TimerDone(Timer* timer)
+{
+	if (!timer)
+		return false;
+
+	return timer->_lifeTime <= 0;
+}
+
+#pragma endregion
 
 struct Player
 {
@@ -52,6 +83,13 @@ struct Enemy
 	Color color{};
 };
 
+Player player;
+std::vector<Bullet> bullets;
+std::vector<Enemy> enemies;
+
+float enemySpawnTime = 0.5f;
+Timer timer{};
+
 int main()
 {
 	InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "BLABLEBLU");
@@ -61,20 +99,19 @@ int main()
 	SetTargetFPS(FPS);
 	SetExitKey(KEY_Q);
 
-	SpawnEnemies();
+	StartTimer(&timer, enemySpawnTime);
 
 	while (!WindowShouldClose())
 	{
 		float dt = GetFrameTime();
-		UpdateAndDraw(dt);
+
+		UpdateGame(dt);
+
+		DrawStuff();
 	}
 
 	CloseWindow();
 }
-
-Player player;
-std::vector<Bullet> bullets;
-std::vector<Enemy> enemies;
 
 void InitGame()
 {
@@ -84,6 +121,8 @@ void InitGame()
 
 void UpdateGame(float dt)
 {
+	UpdateTimer(&timer);
+
 	CheckBounds();
 	ProcessInput(dt);
 
@@ -91,6 +130,12 @@ void UpdateGame(float dt)
 	UpdateEnemies(dt);
 	CheckCollisions();
 	CleanUp();
+
+	if (TimerDone(&timer))
+	{
+		SpawnEnemies();
+		StartTimer(&timer, enemySpawnTime);
+	}
 }
 
 void DrawStuff()
@@ -138,12 +183,6 @@ void CheckBounds()
 		player.body.y = GetScreenHeight() / 2.f;
 }
 
-void UpdateAndDraw(float dt)
-{
-	UpdateGame(dt);
-	DrawStuff();
-}
-
 void SpawnBullet()
 {
 	bullets.push_back(Bullet{ {player.body.x, player.body.y, 10.f, 10.f}, 1000.f, true, RED });
@@ -162,30 +201,28 @@ void UpdateBullets(float dt)
 
 void SpawnEnemies()
 {
+	bool validEnemyPos = false;
+	float x{};
+	float y{};
 
-	for (size_t i = 0; i < 5; ++i)
+	while (!validEnemyPos)
 	{
-		bool validEnemyPos = false;
-		float x{};
-		float y{};
+		x = RandomPosition().x;
+		y = RandomPosition().y;
+		Rectangle tempEnemy{ x, y, 50.f, 30.f };
+		validEnemyPos = true;
 
-		while (!validEnemyPos)
+		for (const auto& e : enemies)
 		{
-			x = RandomPosition().x;
-			y = RandomPosition().y;
-			Rectangle tempEnemy{ x, y, 50.f, 30.f };
-			validEnemyPos = true;
-
-			for (const auto& e : enemies)
-				if (CheckCollisionRecs(e.body, tempEnemy))
-				{
-					validEnemyPos = false;
-					break;
-				}
+			if (CheckCollisionRecs(e.body, tempEnemy))
+			{
+				validEnemyPos = false;
+				break;
+			}
 		}
-
-		enemies.push_back(Enemy{ {x, y, 50.f, 30.f}, 200.f, true, MAGENTA });
 	}
+
+	enemies.push_back(Enemy{ {x, y, 50.f, 30.f}, 50.f, true, MAGENTA });
 }
 
 void UpdateEnemies(float dt)
@@ -194,6 +231,8 @@ void UpdateEnemies(float dt)
 	{
 		if (!enemies[i].active)
 			continue;
+
+		enemies[i].body.y += enemies[i].speed * dt;
 	}
 }
 
@@ -203,7 +242,7 @@ Vector2 RandomPosition()
 	static std::mt19937 rng(dev());
 
 	std::uniform_real_distribution<float> distX(50.f, (float)GetScreenWidth() - 50.f);
-	std::uniform_real_distribution<float> distY(50.f, (float)GetScreenHeight() / 2.f - 30.f);
+	std::uniform_real_distribution<float> distY(-100.f, 0.f);
 
 	return { distX(rng), distY(rng) };
 }
@@ -211,6 +250,7 @@ Vector2 RandomPosition()
 void CheckCollisions()
 {
 	for (size_t i = 0; i < enemies.size(); ++i)
+	{
 		for (size_t j = 0; j < bullets.size(); ++j)
 		{
 			if (enemies[i].active && bullets[j].active && CheckCollisionRecs(enemies[i].body, bullets[j].body))
@@ -219,6 +259,7 @@ void CheckCollisions()
 				bullets[j].active = false;
 			}
 		}
+	}
 }
 
 void CleanUp()
