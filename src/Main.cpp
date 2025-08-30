@@ -338,7 +338,7 @@ void SpawnEnemies()
 		}
 	}
 
-	enemies.push_back(Enemy{ {x, y, 50.f, 30.f}, 100.f, true, MAGENTA });
+	enemies.push_back(Enemy{ {x, y, 50.f, 30.f}, 80.f, true, MAGENTA });
 }
 
 void UpdateEnemies(float dt)
