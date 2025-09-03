@@ -87,6 +87,9 @@ StateType GameplayState::ProcessInput(float dt)
 	if (IsKeyPressed(KEY_ESCAPE))
 		return StateType::MAIN_MENU;
 
+	if (IsKeyPressed(KEY_P))
+		return StateType::PAUSE;
+
 	return StateType::NONE;
 }
 

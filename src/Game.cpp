@@ -1,6 +1,5 @@
 #include "Game.h"
 #include "Config.h"
-#include <iostream>
 
 using namespace GAME;
 

@@ -37,8 +37,13 @@ void GameMgr::Update(float dt)
 
 void GameMgr::Draw()
 {
+	BeginDrawing();
+	ClearBackground(RAYWHITE);
+
 	if (!_gameStates.empty() && _gameStates.top())
 		_gameStates.top()->Draw();
+
+	EndDrawing();
 }
 
 StateType GameMgr::ProcessInput(float dt)
