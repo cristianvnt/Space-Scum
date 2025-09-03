@@ -4,9 +4,11 @@
 class Timer
 {
 private:
-	float _lifeTime;
+	float _lifeTime = -1.f;
 
 public:
+	Timer() = default;
+
 	void StartTimer(float lifeTime);
 	void UpdateTimer();
 	bool TimerDone() const;

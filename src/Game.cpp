@@ -15,6 +15,11 @@ GameMgrSettings Game::InitSettings()
 	return temp;
 }
 
+GameMgrSettings Game::GetSettings()
+{
+	return _gameMgr.GetSettings();
+}
+
 void Game::Run()
 {
 	SetTargetFPS(_gameMgr.GetSettings().fps);

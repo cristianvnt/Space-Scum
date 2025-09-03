@@ -8,10 +8,11 @@ class Game
 private:
 	GameMgr _gameMgr;
 
+	static GameMgrSettings InitSettings();
 public:
 	Game() : _gameMgr{ InitSettings() } {}
 
-	GameMgrSettings InitSettings();
+	GameMgrSettings GetSettings();
 	void Run();
 };
 

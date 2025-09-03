@@ -4,8 +4,7 @@
 int main()
 {
 	Game game;
-	GameMgr settings = game.InitSettings();
-	InitWindow(settings.GetSettings().width, settings.GetSettings().height, "BLABLEBLU");
+	InitWindow(game.GetSettings().width, game.GetSettings().height, "BLABLEBLU");
 	game.Run();
 }
 
