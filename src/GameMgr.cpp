@@ -52,7 +52,7 @@ StateType GameMgr::ProcessInput(float dt)
 		return _gameStates.top()->ProcessInput(dt);
 
 	Close();
-	return StateType::MAIN_MENU;
+	return StateType::NONE;
 }
 
 StateType GameMgr::GetCurrentState() const

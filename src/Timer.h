@@ -4,7 +4,7 @@
 class Timer
 {
 private:
-	float _lifeTime = -1.f;
+	float _lifeTime;
 
 public:
 	Timer() = default;

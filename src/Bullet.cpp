@@ -9,7 +9,7 @@ Bullet::Bullet(Rectangle body, float speed, Color color, bool active)
 
 void Bullet::Update(float dt)
 {
-	_body.y += _speed * dt;
+	_body.y -= _speed * dt;
 }
 
 void Bullet::Draw()

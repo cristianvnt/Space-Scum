@@ -27,23 +27,23 @@ void Game::Run()
 
 	while (!WindowShouldClose() && !shouldClose)
 	{
-		StateType currState = _gameMgr.ProcessInput(GetFrameTime());
+		StateType inputState = _gameMgr.ProcessInput(GetFrameTime());
 		StateType activeState = _gameMgr.GetCurrentState();
 
-		switch (currState)
+		switch (inputState)
 		{
 		case StateType::MAIN_MENU:
 		case StateType::GAMEPLAY:
 		case StateType::GAME_OVER:
-			if (activeState != currState)
+			if (activeState != inputState)
 			{
 				_gameMgr.PopState();
-				_gameMgr.PushState(currState);
+				_gameMgr.PushState(inputState);
 			}
 			break;
 		case StateType::PAUSE:
 			if (activeState != StateType::PAUSE)
-				_gameMgr.PushState(currState);
+				_gameMgr.PushState(inputState);
 			break;
 		case StateType::POP:
 			_gameMgr.PopState();
