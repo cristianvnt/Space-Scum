@@ -8,7 +8,7 @@ private:
 	bool _active{};
 
 public:
-	Enemy(Rectangle body, float speed, Color color, bool active);
+	Enemy(Rectangle body, Vector2 v, Color color, bool active) : Entity(body, v, color), _active{ active } {}
 
 	void Update(float dt) override;
 	void Draw() override;

@@ -8,7 +8,7 @@ private:
 	bool _active{};
 
 public:
-	Bullet(Rectangle body, float speed, Color color, bool active);
+	Bullet(Rectangle body, Vector2 v, Color color, bool active) : Entity(body, v, color), _active{ active } {}
 
 	void Update(float dt) override;
 	void Draw() override;

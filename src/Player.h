@@ -2,11 +2,13 @@
 #define PLAYER_H
 #include "raylib.h"
 #include "Timer.h"
+#include "Entity.h"
 
 struct PlayerSettings
 {
 	Rectangle body{};
 	float speed{};
+	Vector2 velocity{};
 	Color color{};
 	Rectangle life{};
 	int lives{};
@@ -20,6 +22,7 @@ class Player
 private:
 	Rectangle _body{};
 	float _speed{};
+	Vector2 _velocity{};
 	Color _color{};
 	Rectangle _life{};
 	int _lives{};
@@ -30,8 +33,12 @@ private:
 public:
 	Player(const PlayerSettings& ps);
 
-	void Update(Vector2 dir, float dt);
+	void Update(float dt);
 	void Draw() const;
+
+	Vector2 GetVelocity() const;
+	void SetVelocity(Vector2 velocity);
+	void DefaultVelocity();
 
 	const Rectangle GetBody() const { return _body; }
 	void SetBody(const Rectangle& b) { _body = b; }

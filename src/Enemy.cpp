@@ -1,15 +1,10 @@
 #include "Enemy.h"
 #include <Config.h>
 
-Enemy::Enemy(Rectangle body, float speed, Color color, bool active)
-	: Entity(body, speed, color), _active{ active }
-{
-
-}
-
 void Enemy::Update(float dt)
 {
-	_body.y += _speed * dt;
+	_body.x += GetVelocity().x * dt;
+	_body.y += GetVelocity().y * dt;
 }
 
 void Enemy::Draw()

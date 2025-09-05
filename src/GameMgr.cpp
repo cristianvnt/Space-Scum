@@ -9,7 +9,8 @@ PlayerSettings GameMgr::InitPlayerSettings()
 {
 	PlayerSettings tmp{};
 	tmp.body = { (float)_gameMgrSettings.width / 2.f, (float)_gameMgrSettings.height / 1.5f, 50.f, 70.f };
-	tmp.speed = { 500 };
+	tmp.speed = { 500.f };
+	tmp.velocity = { 0.f, 0.f };
 	tmp.color = { BLUE };
 	tmp.score = { 0 };
 	tmp.life = { (float)_gameMgrSettings.width - 50.f, 20.f, 30.f, 30.f };

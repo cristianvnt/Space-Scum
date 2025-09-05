@@ -14,6 +14,10 @@ namespace GAME
 	namespace Gameplay
 	{
 		constexpr const float SPAWN_TIME = 0.7f;
+		constexpr const float COLLISION_TIME = 0.5f;
+		constexpr const float PLAYER_SPEED = 500.f;
+		constexpr const float ENEMY_SPEED = 80.f;
+		constexpr const float BULLET_SPEED = 1000.f;
 	}
 }
 

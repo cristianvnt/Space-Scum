@@ -31,6 +31,8 @@ void GameplayState::Update(float dt)
 	CheckBounds();
 	ProcessInput(dt);
 
+	_player.Update(dt);
+
 	UpdateBullets(dt);
 	UpdateEnemies(dt);
 	CheckCollisions();
@@ -72,14 +74,20 @@ StateType GameplayState::ProcessInput(float dt)
 	if (!_player.GetLives())
 		return StateType::GAME_OVER;
 
+	_player.DefaultVelocity();
+
+	Vector2 velocity = { 0.f, 0.f };
+
 	if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP))
-		_player.Update({ 0, -1 }, dt);
+		velocity.y -= 1.f;
 	if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN))
-		_player.Update({ 0, 1 }, dt);
+		velocity.y += 1.f;
 	if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT))
-		_player.Update({ -1, 0 }, dt);
+		velocity.x -= 1.f;
 	if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT))
-		_player.Update({ 1, 0 }, dt);
+		velocity.x += 1.f;
+
+	_player.SetVelocity({ velocity.x * Gameplay::PLAYER_SPEED, velocity.y * Gameplay::PLAYER_SPEED });
 
 	if (IsKeyPressed(KEY_SPACE))
 		SpawnBullet();
@@ -139,7 +147,7 @@ void GameplayState::SpawnEnemies()
 		}
 	}
 
-	_enemies.emplace_back(new Enemy{ {x, y, 50.f, 30.f}, 80.f, MAGENTA, true });
+	_enemies.emplace_back(new Enemy{ {x, y, 50.f, 30.f}, {0.f, Gameplay::ENEMY_SPEED}, MAGENTA, true });
 }
 
 void GameplayState::UpdateEnemies(float dt)
@@ -174,7 +182,11 @@ void GameplayState::UpdateEnemies(float dt)
 
 void GameplayState::SpawnBullet()
 {
-	_bullets.emplace_back(new Bullet{ {_player.GetBody().x, _player.GetBody().y, 10.f, 10.f}, 1000.f, RED, true});
+	Vector2 pVel = _player.GetVelocity();
+	Vector2 bVel = { 0, -Gameplay::BULLET_SPEED };
+	Vector2 finalVelocity = { pVel.x + bVel.x, pVel.y + bVel.y };
+
+	_bullets.emplace_back(new Bullet{ {_player.GetBody().x, _player.GetBody().y, 10.f, 10.f}, finalVelocity, RED, true });
 }
 
 void GameplayState::UpdateBullets(float dt)
