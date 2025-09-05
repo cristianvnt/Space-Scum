@@ -33,6 +33,9 @@ void GameplayState::Update(float dt)
 
 	_player.Update(dt);
 
+	if (IsKeyPressed(KEY_SPACE))
+		SpawnBullet();
+
 	UpdateBullets(dt);
 	UpdateEnemies(dt);
 	CheckCollisions();
@@ -88,9 +91,6 @@ StateType GameplayState::ProcessInput(float dt)
 		velocity.x += 1.f;
 
 	_player.SetVelocity({ velocity.x * Gameplay::PLAYER_SPEED, velocity.y * Gameplay::PLAYER_SPEED });
-
-	if (IsKeyPressed(KEY_SPACE))
-		SpawnBullet();
 
 	if (IsKeyPressed(KEY_ESCAPE))
 		return StateType::MAIN_MENU;
