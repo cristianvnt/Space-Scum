@@ -37,7 +37,7 @@ public:
 	GameplayState(const GameplaySettings& gps);
 	~GameplayState();
 
-	void Update(float dt) override;
+	StateType Update(float dt) override;
 	void Draw() override;
 	StateType ProcessInput(float dt) override;
 	StateType GetStateType() const override { return StateType::GAMEPLAY; }

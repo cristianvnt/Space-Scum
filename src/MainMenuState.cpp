@@ -5,9 +5,9 @@ MainMenuState::MainMenuState(const MainMenuSettings& mms)
 {
 }
 
-void MainMenuState::Update(float dt)
+StateType MainMenuState::Update(float dt)
 {
-	// nothing idk
+	return StateType::MAIN_MENU;
 }
 
 void MainMenuState::Draw()

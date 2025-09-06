@@ -16,7 +16,7 @@ class GameState
 {
 public:
 	virtual ~GameState() = default;
-	virtual void Update(float dt) = 0;
+	virtual StateType Update(float dt) = 0;
 	virtual void Draw() = 0;
 	virtual StateType ProcessInput(float dt) = 0;
 	virtual StateType GetStateType() const = 0;

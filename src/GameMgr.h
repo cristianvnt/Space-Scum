@@ -28,9 +28,8 @@ public:
 	GameMgr(const GameMgrSettings& gs);
 	~GameMgr();
 
-	void Update(float dt);
+	bool Update(float dt);
 	void Draw();
-	StateType ProcessInput(float dt);
 	StateType GetCurrentState() const;
 
 	const GameMgrSettings GetSettings() const;

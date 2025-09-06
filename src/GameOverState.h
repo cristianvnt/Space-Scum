@@ -13,7 +13,7 @@ class GameOverState : public GameState
 public:
 	GameOverState(const GameOverSettings& gos);
 
-	void Update(float dt) override;
+	StateType Update(float dt) override;
 	void Draw() override;
 	StateType ProcessInput(float dt) override;
 	StateType GetStateType() const override { return StateType::GAME_OVER; }

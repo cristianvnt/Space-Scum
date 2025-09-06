@@ -6,9 +6,9 @@ PauseState::PauseState(const PauseSettings& ps)
 
 }
 
-void PauseState::Update(float dt)
+StateType PauseState::Update(float dt)
 {
-	// nothing idk
+	return StateType::PAUSE;
 }
 
 void PauseState::Draw()

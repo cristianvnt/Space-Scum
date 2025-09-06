@@ -6,9 +6,9 @@ GameOverState::GameOverState(const GameOverSettings& gos)
 
 }
 
-void GameOverState::Update(float dt)
+StateType GameOverState::Update(float dt)
 {
-	// nothing idk
+	return StateType::GAME_OVER;
 }
 
 void GameOverState::Draw()

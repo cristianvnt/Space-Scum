@@ -22,41 +22,13 @@ GameMgrSettings Game::GetSettings()
 void Game::Run()
 {
 	SetTargetFPS(_gameMgr.GetSettings().fps);
-	SetExitKey(KEY_Q);
-	bool shouldClose = false;
+	SetExitKey(KEY_NULL);
 
-	while (!WindowShouldClose() && !shouldClose)
+	while (!WindowShouldClose())
 	{
-		StateType inputState = _gameMgr.ProcessInput(GetFrameTime());
-		StateType activeState = _gameMgr.GetCurrentState();
+		if (!_gameMgr.Update(GetFrameTime()))
+			break;
 
-		switch (inputState)
-		{
-		case StateType::MAIN_MENU:
-		case StateType::GAMEPLAY:
-		case StateType::GAME_OVER:
-			if (activeState != inputState)
-			{
-				_gameMgr.PopState();
-				_gameMgr.PushState(inputState);
-			}
-			break;
-		case StateType::PAUSE:
-			if (activeState != StateType::PAUSE)
-				_gameMgr.PushState(inputState);
-			break;
-		case StateType::POP:
-			_gameMgr.PopState();
-			break;
-		case StateType::NONE:
-			break;
-		case StateType::QUIT:
-			shouldClose = true;
-			break;
-		default:
-			break;
-		}
-		_gameMgr.Update(GetFrameTime());
 		_gameMgr.Draw();
 	}
 

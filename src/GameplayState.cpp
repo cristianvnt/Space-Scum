@@ -8,8 +8,8 @@
 using namespace GAME;
 
 GameplayState::GameplayState(const GameplaySettings& gps)
-	: _gameplaySettings{ gps }, 
-	_uiBounds{ { 0.f, 0.f, (float)gps.width, gps.margin }, { 0.f, (float)gps.height - gps.margin, (float)gps.width, gps.margin } }, 
+	: _gameplaySettings{ gps },
+	_uiBounds{ { 0.f, 0.f, (float)gps.width, gps.margin }, { 0.f, (float)gps.height - gps.margin, (float)gps.width, gps.margin } },
 	_player{ gps.playerSettings }
 {
 	_timer.StartTimer(Gameplay::SPAWN_TIME);
@@ -24,12 +24,15 @@ GameplayState::~GameplayState()
 		delete b;
 }
 
-void GameplayState::Update(float dt)
+StateType GameplayState::Update(float dt)
 {
+	StateType state = ProcessInput(dt);
+	if (state != StateType::NONE)
+		return state;
+
 	_timer.UpdateTimer();
 	_player.GetCollisionTimer().UpdateTimer();
 	CheckBounds();
-	ProcessInput(dt);
 
 	_player.Update(dt);
 
@@ -49,6 +52,8 @@ void GameplayState::Update(float dt)
 
 	if (_player.GetCollisionTimer().TimerDone())
 		_player.SetVulnerable(true);
+
+	return StateType::NONE;
 }
 
 void GameplayState::Draw()

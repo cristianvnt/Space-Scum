@@ -13,7 +13,7 @@ class MainMenuState : public GameState
 public:
 	MainMenuState(const MainMenuSettings& mms);
 
-	void Update(float dt) override;
+	StateType Update(float dt) override;
 	void Draw() override;
 	StateType ProcessInput(float dt) override;
 	StateType GetStateType() const override { return StateType::MAIN_MENU; }

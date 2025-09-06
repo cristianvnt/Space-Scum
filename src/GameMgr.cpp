@@ -30,10 +30,47 @@ GameMgr::~GameMgr()
 	}
 }
 
-void GameMgr::Update(float dt)
+bool GameMgr::Update(float dt)
 {
-	if (!_gameStates.empty() && _gameStates.top())
+	if (_gameStates.empty() || !_gameStates.top())
+	{
+		Close();
+		return false;
+	}
+
+	StateType inputState = _gameStates.top()->ProcessInput(dt);
+
+	switch (inputState)
+	{
+	case StateType::MAIN_MENU:
+	case StateType::GAMEPLAY:
+	case StateType::GAME_OVER:
+		if (inputState != GetCurrentState())
+		{
+			PopState();
+			PushState(inputState);
+		}
+		break;
+	case StateType::PAUSE:
+		if (StateType::PAUSE != GetCurrentState())
+			PushState(inputState);
+		break;
+	case StateType::POP:
+		PopState();
+		if (_gameStates.empty())
+			return false;
+		break;
+	case StateType::QUIT:
+		PopState();
+		return false;
+		break;
+	case StateType::NONE:
+	default:
 		_gameStates.top()->Update(dt);
+		break;
+	}
+
+	return true;
 }
 
 void GameMgr::Draw()
@@ -45,15 +82,6 @@ void GameMgr::Draw()
 		_gameStates.top()->Draw();
 
 	EndDrawing();
-}
-
-StateType GameMgr::ProcessInput(float dt)
-{
-	if (!_gameStates.empty() && _gameStates.top())
-		return _gameStates.top()->ProcessInput(dt);
-
-	Close();
-	return StateType::NONE;
 }
 
 StateType GameMgr::GetCurrentState() const
@@ -74,16 +102,16 @@ void GameMgr::PushState(const StateType& st)
 	switch (st)
 	{
 	case StateType::MAIN_MENU:
-		_gameStates.push(new MainMenuState(MainMenuSettings{ _gameMgrSettings.width, _gameMgrSettings.height }));
+		_gameStates.emplace(new MainMenuState(MainMenuSettings{ _gameMgrSettings.width, _gameMgrSettings.height }));
 		break;
 	case StateType::GAMEPLAY:
-		_gameStates.push(new GameplayState(GameplaySettings{ _gameMgrSettings.width, _gameMgrSettings.height, _gameMgrSettings.margin, InitPlayerSettings() }));
+		_gameStates.emplace(new GameplayState(GameplaySettings{ _gameMgrSettings.width, _gameMgrSettings.height, _gameMgrSettings.margin, InitPlayerSettings() }));
 		break;
 	case StateType::PAUSE:
-		_gameStates.push(new PauseState(PauseSettings{ _gameMgrSettings.width, _gameMgrSettings.height }));
+		_gameStates.emplace(new PauseState(PauseSettings{ _gameMgrSettings.width, _gameMgrSettings.height }));
 		break;
 	case StateType::GAME_OVER:
-		_gameStates.push(new GameOverState(GameOverSettings{ _gameMgrSettings.width, _gameMgrSettings.height }));
+		_gameStates.emplace(new GameOverState(GameOverSettings{ _gameMgrSettings.width, _gameMgrSettings.height }));
 		break;
 	default:
 		break;
