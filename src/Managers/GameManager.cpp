@@ -1,24 +1,48 @@
 #include "GameManager.h"
 
-GameManager::GameManager(const GameManagerSettings& gs) : _gameMgrSettings{ gs }
+GameManager::GameManager(const std::string& filePath) : _configManager{ filePath }, _gameManagerSettings { InitSettings() }
 {
 	PushState(StateType::MAIN_MENU);
 }
 
+GameManagerSettings GameManager::InitSettings()
+{
+	GameManagerSettings temp{};
+	temp.width = _configManager.GetValue<int>("GAME", "SCREEN_WIDTH");
+	temp.height = _configManager.GetValue<int>("GAME", "SCREEN_HEIGHT");
+	temp.margin = _configManager.GetValue<float>("GAME", "MARGIN");
+	temp.fps = _configManager.GetValue<int>("GAME", "FPS");
+
+	return temp;
+}
+
 PlayerSettings GameManager::InitPlayerSettings()
 {
-	PlayerSettings tmp{};
-	tmp.body = { (float)_gameMgrSettings.width / 2.f, (float)_gameMgrSettings.height / 1.5f, 50.f, 70.f };
-	tmp.speed = { 500.f };
-	tmp.velocity = { 0.f, 0.f };
-	tmp.color = { BLUE };
-	tmp.score = { 0 };
-	tmp.life = { (float)_gameMgrSettings.width - 50.f, 20.f, 30.f, 30.f };
-	tmp.lives = { 5 };
-	tmp.vulnerable = { true };
-	tmp.collisionTimer = { };
+	PlayerSettings temp{};
+	temp.body = { (float)_gameManagerSettings.width / 2.f, (float)_gameManagerSettings.height / 1.5f, 50.f, 70.f };
+	temp.speed = _configManager.GetValue<int>("PLAYER", "PLAYER_SPEED");;
+	temp.velocity = { 0.f, 0.f };
+	temp.color = { BLUE };
+	temp.score = 0;
+	temp.life = { (float)_gameManagerSettings.width - 50.f, 20.f, 30.f, 30.f };
+	temp.lives = _configManager.GetValue<int>("PLAYER", "LIVES");
+	temp.vulnerable = true;
+	temp.collisionTimer = { };
 
-	return tmp;
+	return temp;
+}
+
+EnemySettings GameManager::InitEnemySettings()
+{
+	EnemySettings temp{};
+	temp.body = { 0.f, 0.f, 50.f, 30.f };
+	temp.velocity = { 0.f, 1.f };
+	temp.color = MAGENTA;
+	temp.speed = _configManager.GetValue<float>("ENEMY", "ENEMY_SPEED");
+	temp.active = true;
+	temp.spawnTime = _configManager.GetValue<float>("ENEMY", "SPAWN_TIME");
+
+	return temp;
 }
 
 GameManager::~GameManager()
@@ -94,7 +118,7 @@ StateType GameManager::GetCurrentState() const
 
 const GameManagerSettings GameManager::GetSettings() const
 {
-	return _gameMgrSettings;
+	return _gameManagerSettings;
 }
 
 void GameManager::PushState(const StateType& st)
@@ -102,16 +126,17 @@ void GameManager::PushState(const StateType& st)
 	switch (st)
 	{
 	case StateType::MAIN_MENU:
-		_gameStates.emplace(new MainMenuState(MainMenuSettings{ _gameMgrSettings.width, _gameMgrSettings.height }));
+		_gameStates.emplace(new MainMenuState(MainMenuSettings{ _gameManagerSettings.width, _gameManagerSettings.height }));
 		break;
 	case StateType::GAMEPLAY:
-		_gameStates.emplace(new GameplayState(GameplaySettings{ _gameMgrSettings.width, _gameMgrSettings.height, _gameMgrSettings.margin, InitPlayerSettings() }));
+		_gameStates.emplace(new GameplayState(GameplaySettings{ _gameManagerSettings.width, _gameManagerSettings.height, _gameManagerSettings.margin, 
+			InitPlayerSettings(), InitEnemySettings() }));
 		break;
 	case StateType::PAUSE:
-		_gameStates.emplace(new PauseState(PauseSettings{ _gameMgrSettings.width, _gameMgrSettings.height }));
+		_gameStates.emplace(new PauseState(PauseSettings{ _gameManagerSettings.width, _gameManagerSettings.height }));
 		break;
 	case StateType::GAME_OVER:
-		_gameStates.emplace(new GameOverState(GameOverSettings{ _gameMgrSettings.width, _gameMgrSettings.height }));
+		_gameStates.emplace(new GameOverState(GameOverSettings{ _gameManagerSettings.width, _gameManagerSettings.height }));
 		break;
 	default:
 		break;

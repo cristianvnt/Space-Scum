@@ -20,6 +20,7 @@ struct GameplaySettings
 	int height{};
 	float margin{};
 	PlayerSettings playerSettings{};
+	EnemySettings enemySettings{};
 };
 
 class GameplayState : public GameState

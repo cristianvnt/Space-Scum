@@ -21,8 +21,3 @@ bool Enemy::IsActive() const
 {
 	return _active;
 }
-
-bool Enemy::IsOffScreen() const
-{
-	return _body.y >= GAME::Settings::SCREEN_HEIGHT - GAME::Settings::MARGIN;
-}

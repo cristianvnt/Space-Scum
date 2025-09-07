@@ -6,11 +6,11 @@
 class Game
 {
 private:
-	GameManager _gameMgr;
+	GameManager _gameManager;
 
-	static GameManagerSettings InitSettings();
+	GameManagerSettings InitSettings();
 public:
-	Game() : _gameMgr{ InitSettings() } {}
+	Game(const std::string& filePath);
 
 	GameManagerSettings GetSettings();
 	void Run();

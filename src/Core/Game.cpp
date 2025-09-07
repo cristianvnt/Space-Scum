@@ -1,36 +1,27 @@
 #include "Game.h"
 #include "utils/Config.h"
 
-using namespace GAME;
-
-GameManagerSettings Game::InitSettings()
+Game::Game(const std::string& filePath) : _gameManager{ filePath }
 {
-	GameManagerSettings temp;
-	temp.width = Settings::SCREEN_WIDTH;
-	temp.height = Settings::SCREEN_HEIGHT;
-	temp.fps = Settings::FPS;
-	temp.margin = Settings::MARGIN;
-
-	return temp;
 }
 
 GameManagerSettings Game::GetSettings()
 {
-	return _gameMgr.GetSettings();
+	return _gameManager.GetSettings();
 }
 
 void Game::Run()
 {
-	SetTargetFPS(_gameMgr.GetSettings().fps);
+	SetTargetFPS(_gameManager.GetSettings().fps);
 	SetExitKey(KEY_NULL);
 
 	while (!WindowShouldClose())
 	{
-		if (!_gameMgr.Update(GetFrameTime()))
+		if (!_gameManager.Update(GetFrameTime()))
 			break;
 
-		_gameMgr.Draw();
+		_gameManager.Draw();
 	}
 
-	_gameMgr.Close();
+	_gameManager.Close();
 }

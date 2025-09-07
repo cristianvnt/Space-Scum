@@ -22,8 +22,3 @@ bool Bullet::IsActive() const
 	return _active;
 }
 
-bool Bullet::IsOffScreen() const
-{
-	return _body.y + _body.height <= GAME::Settings::MARGIN;
-}
-

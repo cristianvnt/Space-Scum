@@ -1,14 +1,15 @@
 #ifndef GAME_MANAGER_H
 #define GAME_MANAGER_H
 
+#include <stack>
+
 #include "raylib.h"
 #include "States/GameState.h"
 #include "States/MainMenuState.h"
 #include "States/GameplayState.h"
 #include "States/PauseState.h"
 #include "States/GameOverState.h"
-
-#include <stack>
+#include "ConfigManager.h"
 
 struct GameManagerSettings
 {
@@ -22,11 +23,14 @@ class GameManager
 {
 private:
 	std::stack<GameState*> _gameStates{};
-	GameManagerSettings _gameMgrSettings;
+	ConfigManager _configManager;
+	GameManagerSettings _gameManagerSettings;
 
 	PlayerSettings InitPlayerSettings();
+	EnemySettings InitEnemySettings();
+	GameManagerSettings InitSettings();
 public:
-	GameManager(const GameManagerSettings& gs);
+	GameManager(const std::string& filePath);
 	~GameManager();
 
 	bool Update(float dt);

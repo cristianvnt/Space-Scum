@@ -5,14 +5,12 @@
 #include <string>
 #include <random>
 
-using namespace GAME;
-
 GameplayState::GameplayState(const GameplaySettings& gps)
 	: _gameplaySettings{ gps },
 	_uiBounds{ { 0.f, 0.f, (float)gps.width, gps.margin }, { 0.f, (float)gps.height - gps.margin, (float)gps.width, gps.margin } },
 	_player{ gps.playerSettings }
 {
-	_gameTimer.StartTimer(Gameplay::SPAWN_TIME);
+	_gameTimer.StartTimer(gps.enemySettings.spawnTime);
 }
 
 GameplayState::~GameplayState()
@@ -47,7 +45,7 @@ StateType GameplayState::Update(float dt)
 	if (_gameTimer.TimerDone())
 	{
 		SpawnEnemies();
-		_gameTimer.StartTimer(Gameplay::SPAWN_TIME);
+		_gameTimer.StartTimer(_gameplaySettings.enemySettings.spawnTime);
 	}
 
 	if (_player.GetCollisionTimer().TimerDone())
@@ -95,7 +93,7 @@ StateType GameplayState::ProcessInput(float dt)
 	if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT))
 		velocity.x += 1.f;
 
-	_player.SetVelocity({ velocity.x * Gameplay::PLAYER_SPEED, velocity.y * Gameplay::PLAYER_SPEED });
+	_player.SetVelocity({ velocity.x * _gameplaySettings.playerSettings.speed, velocity.y * _gameplaySettings.playerSettings.speed });
 
 	if (IsKeyPressed(KEY_ESCAPE))
 		return StateType::MAIN_MENU;
@@ -112,8 +110,8 @@ void GameplayState::CheckBounds()
 		_player.SetBodyVec({ (float)_gameplaySettings.width - _player.GetBody().width, _player.GetBody().y });
 	if (_player.GetBody().x <= 0)
 		_player.SetBodyVec({ 0.f, _player.GetBody().y });
-	if ((_player.GetBody().y + _player.GetBody().height) >= (float)_gameplaySettings.height - Settings::MARGIN)
-		_player.SetBodyVec({ _player.GetBody().x, (float)_gameplaySettings.height - Settings::MARGIN - _player.GetBody().height });
+	if ((_player.GetBody().y + _player.GetBody().height) >= (float)_gameplaySettings.height - _gameplaySettings.margin)
+		_player.SetBodyVec({ _player.GetBody().x, (float)_gameplaySettings.height - _gameplaySettings.margin - _player.GetBody().height });
 	if ((_player.GetBody().y) <= (float)_gameplaySettings.height / 2.f)
 		_player.SetBodyVec({ _player.GetBody().x, (float)_gameplaySettings.height / 2.f });
 }
@@ -152,7 +150,13 @@ void GameplayState::SpawnEnemies()
 		}
 	}
 
-	_enemies.emplace_back(new Enemy{ {x, y, 50.f, 30.f}, {0.f, Gameplay::ENEMY_SPEED}, MAGENTA, true });
+	EnemySettings enemySettingsTmp{ _gameplaySettings.enemySettings };
+	enemySettingsTmp.body.x = x;
+	enemySettingsTmp.body.y = y;
+	enemySettingsTmp.velocity = { _gameplaySettings.enemySettings.speed * _gameplaySettings.enemySettings.velocity.x, 
+		_gameplaySettings.enemySettings.speed * _gameplaySettings.enemySettings.velocity.y };
+
+	_enemies.emplace_back(new Enemy{ EnemySettings{ enemySettingsTmp } });
 }
 
 void GameplayState::UpdateEnemies(float dt)
@@ -188,7 +192,7 @@ void GameplayState::UpdateEnemies(float dt)
 void GameplayState::SpawnBullet()
 {
 	Vector2 pVel = _player.GetVelocity();
-	Vector2 bVel = { 0, -Gameplay::BULLET_SPEED };
+	Vector2 bVel = { 0, -_gameplaySettings.playerSettings.speed };
 	Vector2 finalVelocity = { pVel.x + bVel.x, pVel.y + bVel.y };
 
 	_bullets.emplace_back(new Bullet{ {_player.GetBody().x, _player.GetBody().y, 10.f, 10.f}, finalVelocity, RED, true });
@@ -203,7 +207,7 @@ void GameplayState::UpdateBullets(float dt)
 
 		bullet->Update(dt);
 
-		if (bullet->GetBody().y + bullet->GetBody().height <= Settings::MARGIN)
+		if (bullet->GetBody().y + bullet->GetBody().height <= _gameplaySettings.margin)
 			bullet->SetActive(false);
 	}
 }

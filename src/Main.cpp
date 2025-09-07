@@ -2,7 +2,7 @@
 
 int main()
 {
-	Game game;
+	Game game{ "config/Settings.ini" };
 	InitWindow(game.GetSettings().width, game.GetSettings().height, "BLABLEBLU");
 	game.Run();
 }

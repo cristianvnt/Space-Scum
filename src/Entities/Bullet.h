@@ -15,7 +15,6 @@ public:
 
 	void SetActive(bool ac);
 	bool IsActive() const;
-	bool IsOffScreen() const;
 };
 
 #endif

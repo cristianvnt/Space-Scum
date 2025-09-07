@@ -5,6 +5,7 @@
 #include <map>
 #include <algorithm>
 #include <string>
+#include <iostream>
 
 class ConfigManager
 {
@@ -28,7 +29,7 @@ T ConfigManager::GetValue(const std::string& section, const std::string& key)
 	std::string value = GetString(section, key);
 	if (value.empty())
 	{
-		std::cerr << "ERROR: Incorrect value in Settings.ini\n";
+		std::cout << "ERROR: Incorrect value: " + value + " section-key: " + section + "-" + key + " in Settings.ini\n";
 		return T{};
 	}
 
@@ -46,7 +47,7 @@ T ConfigManager::GetValue(const std::string& section, const std::string& key)
 			output = true;
 		else
 		{
-			std::cerr << "ERROR: Wrong bool value\n";
+			std::cout << "ERROR: Wrong bool value\n";
 			return T{};
 		}
 	}
