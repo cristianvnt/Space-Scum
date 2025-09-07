@@ -1,5 +1,4 @@
 #include "Game.h"
-#include "utils/Config.h"
 
 Game::Game(const std::string& filePath) : _gameManager{ filePath }
 {

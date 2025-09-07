@@ -20,7 +20,7 @@ PlayerSettings GameManager::InitPlayerSettings()
 {
 	PlayerSettings temp{};
 	temp.body = { (float)_gameManagerSettings.width / 2.f, (float)_gameManagerSettings.height / 1.5f, 50.f, 70.f };
-	temp.speed = _configManager.GetValue<int>("PLAYER", "PLAYER_SPEED");;
+	temp.speed = _configManager.GetValue<float>("PLAYER", "PLAYER_SPEED");
 	temp.velocity = { 0.f, 0.f };
 	temp.color = { BLUE };
 	temp.score = 0;

@@ -1,6 +1,5 @@
 #include "GameplayState.h"
 #include "raylib.h"
-#include "utils/Config.h"
 
 #include <string>
 #include <random>

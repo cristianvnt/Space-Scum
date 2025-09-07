@@ -1,5 +1,4 @@
 #include "Bullet.h"
-#include "utils/Config.h"
 
 void Bullet::Update(float dt)
 {
