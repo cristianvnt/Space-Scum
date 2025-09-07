@@ -152,8 +152,8 @@ void GameplayState::SpawnEnemies()
 	EnemySettings enemySettingsTmp{ _gameplaySettings.enemySettings };
 	enemySettingsTmp.body.x = x;
 	enemySettingsTmp.body.y = y;
-	enemySettingsTmp.velocity = { _gameplaySettings.enemySettings.speed * _gameplaySettings.enemySettings.velocity.x, 
-		_gameplaySettings.enemySettings.speed * _gameplaySettings.enemySettings.velocity.y };
+	Vector2 direction = { 0, 1 };
+	enemySettingsTmp.velocity = { direction.x * enemySettingsTmp.speed, direction.y * enemySettingsTmp.speed };
 
 	_enemies.emplace_back(new Enemy{ EnemySettings{ enemySettingsTmp } });
 }

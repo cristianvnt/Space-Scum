@@ -36,7 +36,7 @@ EnemySettings GameManager::InitEnemySettings()
 {
 	EnemySettings temp{};
 	temp.body = { 0.f, 0.f, 50.f, 30.f };
-	temp.velocity = { 0.f, 1.f };
+	temp.velocity = { 0.f, 0.f };
 	temp.color = MAGENTA;
 	temp.speed = _configManager.GetValue<float>("ENEMY", "ENEMY_SPEED");
 	temp.active = true;
