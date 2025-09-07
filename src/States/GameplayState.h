@@ -1,10 +1,10 @@
 #ifndef GAMEPLAY_STATE_H
 #define GAMEPLAY_STATE_H
 #include "GameState.h"
-#include "Timer.h"
-#include "Player.h"
-#include "Bullet.h"
-#include "Enemy.h"
+#include "utils/Timer.h"
+#include "Entities/Player.h"
+#include "Entities/Bullet.h"
+#include "Entities/Enemy.h"
 
 #include <vector>
 
@@ -19,14 +19,14 @@ struct GameplaySettings
 	int width{};
 	int height{};
 	float margin{};
-	PlayerSettings playerSettings;
+	PlayerSettings playerSettings{};
 };
 
 class GameplayState : public GameState
 {
 private:
 	UIBounds _uiBounds{};
-	Timer _timer{};
+	Timer _gameTimer{};
 	Player _player;
 	GameplaySettings _gameplaySettings;
 

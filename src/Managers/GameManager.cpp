@@ -1,11 +1,11 @@
-#include "GameMgr.h"
+#include "GameManager.h"
 
-GameMgr::GameMgr(const GameMgrSettings& gs) : _gameMgrSettings{ gs }
+GameManager::GameManager(const GameManagerSettings& gs) : _gameMgrSettings{ gs }
 {
 	PushState(StateType::MAIN_MENU);
 }
 
-PlayerSettings GameMgr::InitPlayerSettings()
+PlayerSettings GameManager::InitPlayerSettings()
 {
 	PlayerSettings tmp{};
 	tmp.body = { (float)_gameMgrSettings.width / 2.f, (float)_gameMgrSettings.height / 1.5f, 50.f, 70.f };
@@ -21,7 +21,7 @@ PlayerSettings GameMgr::InitPlayerSettings()
 	return tmp;
 }
 
-GameMgr::~GameMgr()
+GameManager::~GameManager()
 {
 	while (!_gameStates.empty())
 	{
@@ -30,7 +30,7 @@ GameMgr::~GameMgr()
 	}
 }
 
-bool GameMgr::Update(float dt)
+bool GameManager::Update(float dt)
 {
 	if (_gameStates.empty() || !_gameStates.top())
 	{
@@ -73,7 +73,7 @@ bool GameMgr::Update(float dt)
 	return true;
 }
 
-void GameMgr::Draw()
+void GameManager::Draw()
 {
 	BeginDrawing();
 	ClearBackground(RAYWHITE);
@@ -84,7 +84,7 @@ void GameMgr::Draw()
 	EndDrawing();
 }
 
-StateType GameMgr::GetCurrentState() const
+StateType GameManager::GetCurrentState() const
 {
 	if (_gameStates.empty())
 		return StateType::NONE;
@@ -92,12 +92,12 @@ StateType GameMgr::GetCurrentState() const
 	return _gameStates.top()->GetStateType();
 }
 
-const GameMgrSettings GameMgr::GetSettings() const
+const GameManagerSettings GameManager::GetSettings() const
 {
 	return _gameMgrSettings;
 }
 
-void GameMgr::PushState(const StateType& st)
+void GameManager::PushState(const StateType& st)
 {
 	switch (st)
 	{
@@ -118,7 +118,7 @@ void GameMgr::PushState(const StateType& st)
 	}
 }
 
-void GameMgr::PopState()
+void GameManager::PopState()
 {
 	if (_gameStates.empty())
 		return;
@@ -127,7 +127,7 @@ void GameMgr::PopState()
 	_gameStates.pop();
 }
 
-void GameMgr::Close()
+void GameManager::Close()
 {
 	CloseWindow();
 }

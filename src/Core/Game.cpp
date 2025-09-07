@@ -1,11 +1,11 @@
 #include "Game.h"
-#include "Config.h"
+#include "utils/Config.h"
 
 using namespace GAME;
 
-GameMgrSettings Game::InitSettings()
+GameManagerSettings Game::InitSettings()
 {
-	GameMgrSettings temp;
+	GameManagerSettings temp;
 	temp.width = Settings::SCREEN_WIDTH;
 	temp.height = Settings::SCREEN_HEIGHT;
 	temp.fps = Settings::FPS;
@@ -14,7 +14,7 @@ GameMgrSettings Game::InitSettings()
 	return temp;
 }
 
-GameMgrSettings Game::GetSettings()
+GameManagerSettings Game::GetSettings()
 {
 	return _gameMgr.GetSettings();
 }

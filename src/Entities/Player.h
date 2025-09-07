@@ -1,7 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 #include "raylib.h"
-#include "Timer.h"
+#include "utils/Timer.h"
 #include "Entity.h"
 
 struct PlayerSettings

@@ -1,6 +1,6 @@
 #include "GameplayState.h"
 #include "raylib.h"
-#include "Config.h"
+#include "utils/Config.h"
 
 #include <string>
 #include <random>
@@ -12,7 +12,7 @@ GameplayState::GameplayState(const GameplaySettings& gps)
 	_uiBounds{ { 0.f, 0.f, (float)gps.width, gps.margin }, { 0.f, (float)gps.height - gps.margin, (float)gps.width, gps.margin } },
 	_player{ gps.playerSettings }
 {
-	_timer.StartTimer(Gameplay::SPAWN_TIME);
+	_gameTimer.StartTimer(Gameplay::SPAWN_TIME);
 }
 
 GameplayState::~GameplayState()
@@ -30,7 +30,7 @@ StateType GameplayState::Update(float dt)
 	if (state != StateType::NONE)
 		return state;
 
-	_timer.UpdateTimer();
+	_gameTimer.UpdateTimer();
 	_player.GetCollisionTimer().UpdateTimer();
 	CheckBounds();
 
@@ -44,10 +44,10 @@ StateType GameplayState::Update(float dt)
 	CheckCollisions();
 	CleanUp();
 
-	if (_timer.TimerDone())
+	if (_gameTimer.TimerDone())
 	{
 		SpawnEnemies();
-		_timer.StartTimer(Gameplay::SPAWN_TIME);
+		_gameTimer.StartTimer(Gameplay::SPAWN_TIME);
 	}
 
 	if (_player.GetCollisionTimer().TimerDone())

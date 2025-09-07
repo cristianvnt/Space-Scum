@@ -1,5 +1,5 @@
 #include "Enemy.h"
-#include <Config.h>
+#include "utils/Config.h"
 
 void Enemy::Update(float dt)
 {

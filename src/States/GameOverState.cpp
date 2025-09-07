@@ -22,5 +22,8 @@ StateType GameOverState::ProcessInput(float dt)
 	if (IsKeyPressed(KEY_R))
 		return StateType::GAMEPLAY;
 
+	if (IsKeyPressed(KEY_ESCAPE))
+		return StateType::MAIN_MENU;
+
 	return StateType::NONE;
 }
