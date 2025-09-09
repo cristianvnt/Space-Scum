@@ -28,6 +28,7 @@ private:
 
 	PlayerSettings InitPlayerSettings();
 	EnemySettings InitEnemySettings();
+	BulletSettings InitBulletSettings();
 	GameManagerSettings InitSettings();
 public:
 	GameManager(const std::string& filePath);

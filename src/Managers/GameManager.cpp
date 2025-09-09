@@ -39,8 +39,20 @@ EnemySettings GameManager::InitEnemySettings()
 	temp.velocity = { 0.f, 0.f };
 	temp.color = MAGENTA;
 	temp.speed = _configManager.GetValue<float>("ENEMY", "ENEMY_SPEED");
-	temp.active = true;
+	temp.active = false;
 	temp.spawnTime = _configManager.GetValue<float>("ENEMY", "SPAWN_TIME");
+
+	return temp;
+}
+
+BulletSettings GameManager::InitBulletSettings()
+{
+	BulletSettings temp{};
+	temp.body = { 0.f, 0.f, 10.f, 15.f };
+	temp.velocity = { 0.f, 0.f };
+	temp.speed = _configManager.GetValue<float>("BULLET", "BULLET_SPEED");
+	temp.color = RED;
+	temp.active = false;
 
 	return temp;
 }
@@ -130,7 +142,7 @@ void GameManager::PushState(const StateType& st)
 		break;
 	case StateType::GAMEPLAY:
 		_gameStates.emplace(new GameplayState(GameplaySettings{ _gameManagerSettings.width, _gameManagerSettings.height, _gameManagerSettings.margin, 
-			InitPlayerSettings(), InitEnemySettings() }));
+			InitPlayerSettings(), InitEnemySettings(), InitBulletSettings()}));
 		break;
 	case StateType::PAUSE:
 		_gameStates.emplace(new PauseState(PauseSettings{ _gameManagerSettings.width, _gameManagerSettings.height }));

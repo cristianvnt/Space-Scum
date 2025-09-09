@@ -149,13 +149,14 @@ void GameplayState::SpawnEnemies()
 		}
 	}
 
-	EnemySettings enemySettingsTmp{ _gameplaySettings.enemySettings };
-	enemySettingsTmp.body.x = x;
-	enemySettingsTmp.body.y = y;
-	Vector2 direction = { 0, 1 };
-	enemySettingsTmp.velocity = { direction.x * enemySettingsTmp.speed, direction.y * enemySettingsTmp.speed };
+	const EnemySettings& es = _gameplaySettings.enemySettings;
 
-	_enemies.emplace_back(new Enemy{ EnemySettings{ enemySettingsTmp } });
+	_enemies.emplace_back(new Enemy{ EnemySettings{}
+		.SetBody({ x, y, es.body.width, es.body.height })
+		.SetVelocity({0, 1}, es.speed)
+		.SetColor(MAGENTA)
+		.SetActive(true)
+	});
 }
 
 void GameplayState::UpdateEnemies(float dt)
@@ -191,10 +192,15 @@ void GameplayState::UpdateEnemies(float dt)
 void GameplayState::SpawnBullet()
 {
 	Vector2 pVel = _player.GetVelocity();
-	Vector2 bVel = { 0, -_gameplaySettings.playerSettings.speed };
+	Vector2 bVel = { 0, -_gameplaySettings.bulletSettings.speed };
 	Vector2 finalVelocity = { pVel.x + bVel.x, pVel.y + bVel.y };
 
-	_bullets.emplace_back(new Bullet{ {_player.GetBody().x, _player.GetBody().y, 10.f, 10.f}, finalVelocity, RED, true });
+	_bullets.emplace_back(new Bullet{ BulletSettings{}
+		.SetBody({_player.GetBody().x, _player.GetBody().y, 10.f, 15.f})
+		.SetVelocity(finalVelocity)
+		.SetColor(RED)
+		.SetActive(true)
+	});
 }
 
 void GameplayState::UpdateBullets(float dt)

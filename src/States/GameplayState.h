@@ -21,6 +21,7 @@ struct GameplaySettings
 	float margin{};
 	PlayerSettings playerSettings{};
 	EnemySettings enemySettings{};
+	BulletSettings bulletSettings{};
 };
 
 class GameplayState : public GameState
