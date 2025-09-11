@@ -13,6 +13,7 @@ struct BulletSettings
 
 	BulletSettings& SetBody(const Rectangle& b) { body = b; return *this; }
 	BulletSettings& SetVelocity(Vector2 v) { velocity = v; return *this; }
+	BulletSettings& SetVelocity(Vector2 dir, float speed) { velocity = {dir.x * speed, dir.y * speed}; return *this; }
 	BulletSettings& SetColor(Color c) { color = c; return *this; }
 	BulletSettings& SetSpeed(float s) { speed = s; return *this; }
 	BulletSettings& SetDirection(Vector2 d) { direction = d; return *this; }

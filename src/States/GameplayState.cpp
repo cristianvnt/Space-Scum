@@ -3,6 +3,7 @@
 
 #include <string>
 #include <random>
+#include <format>
 
 GameplayState::GameplayState(const GameplaySettings& gps)
 	: _gameplaySettings{ gps },
@@ -69,7 +70,7 @@ void GameplayState::Draw()
 		DrawRectangleRec({ _player.GetLife().x - i * 40, _player.GetLife().y, _player.GetLife().width, _player.GetLife().height }, GREEN);
 
 	DrawRectangleRec(_uiBounds.bottomMargin, LIGHTGRAY);
-	DrawText(("Score: " + std::to_string(_player.GetScore())).c_str(), 20, _gameplaySettings.height - 50, 50, BLACK);
+	DrawText((std::format("Score: {}", std::to_string(_player.GetScore())).c_str()), 20, _gameplaySettings.height - 50, 50, BLACK);
 
 	DrawFPS(10, 10);
 }
@@ -191,13 +192,11 @@ void GameplayState::UpdateEnemies(float dt)
 
 void GameplayState::SpawnBullet()
 {
-	Vector2 pVel = _player.GetVelocity();
-	Vector2 bVel = { 0, -_gameplaySettings.bulletSettings.speed };
-	Vector2 finalVelocity = { pVel.x + bVel.x, pVel.y + bVel.y };
+	Vector2 bDir = { 0, -1 };
 
 	_bullets.emplace_back(new Bullet{ BulletSettings{}
 		.SetBody({_player.GetBody().x, _player.GetBody().y, 10.f, 15.f})
-		.SetVelocity(finalVelocity)
+		.SetVelocity(bDir, _gameplaySettings.bulletSettings.speed)
 		.SetColor(RED)
 		.SetActive(true)
 	});
